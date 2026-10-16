@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CSV Explorer</title>
+    <link rel="stylesheet" href="/style.css">
+    <script src="/app.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1>CSV Explorer</h1>
+        <p>Browse and explore your CSV files</p>
+    </header>
+
+    <main>
+        <section class="toolbar">
+            <label for="fileSelect">Select a CSV file</label>
+            <select id="fileSelect">
+                <option value="">Loading files...</option>
+            </select>
+
+            <input id="searchInput"
+                   type="search"
+                   placeholder="Search selected file..."
+                   aria-label="Search CSV data">
+        </section>
+
+        <section class="stats">
+            <div class="stat">
+                <span>Selected file</span>
+                <strong id="filename">—</strong>
+            </div>
+            <div class="stat">
+                <span>Matching rows</span>
+                <strong id="rowCount">0</strong>
+            </div>
+            <div class="stat">
+                <span>Columns</span>
+                <strong id="columnCount">0</strong>
+            </div>
+        </section>
+
+        <p id="status" role="status">Loading files...</p>
+
+        <div class="table-container">
+            <table>
+                <thead id="tableHead"></thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+
+        <nav class="pagination" aria-label="Table pagination">
+            <button id="prevButton" disabled>Previous</button>
+            <span id="pageInfo">Page 0 of 0</span>
+            <button id="nextButton" disabled>Next</button>
+        </nav>
+    </main>
+</body>
+</html>

@@ -1,0 +1,158 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: system-ui, sans-serif;
+    color: #1f2937;
+    background: #f5f7fb;
+}
+
+header {
+    background: #172554;
+    color: white;
+    padding: 28px 5%;
+}
+
+header h1 {
+    margin: 0 0 6px;
+}
+
+header p {
+    margin: 0;
+    color: #dbeafe;
+}
+
+main {
+    max-width: 1400px;
+    margin: 28px auto;
+    padding: 0 20px;
+}
+
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.toolbar label {
+    font-weight: 600;
+}
+
+select, input, button {
+    font: inherit;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+    background: white;
+}
+
+select {
+    min-width: 220px;
+}
+
+input {
+    flex: 1;
+    min-width: 200px;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.stat {
+    padding: 18px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    overflow-wrap: anywhere;
+}
+
+.stat span, .stat strong {
+    display: block;
+}
+
+.stat span {
+    color: #64748b;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.stat strong {
+    font-size: 20px;
+}
+
+.table-container {
+    overflow: auto;
+    max-height: 65vh;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    white-space: nowrap;
+}
+
+th, td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e2e8f0;
+    text-align: left;
+}
+
+th {
+    position: sticky;
+    top: 0;
+    background: #eaf0f9;
+}
+
+tbody tr:hover {
+    background: #f8fafc;
+}
+
+#status {
+    color: #475569;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    padding: 20px 0;
+}
+
+button {
+    cursor: pointer;
+    background: #1d4ed8;
+    color: white;
+    border: 0;
+}
+
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+}
+
+@media (max-width: 600px) {
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    .toolbar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    select, input {
+        width: 100%;
+    }
+}
