@@ -56,6 +56,74 @@ sources:
     url_template: "https://api.ashbyhq.com/posting-api/job-board/{company}"
     companies: []     # e.g. ["ramp", "linear"]
 
+# Resume skill profile. Jobs are scored by how many of these skills appear in
+# the title + description, weighted, then normalized to 0-100. Jobs below
+# min_score are dropped; the rest are written to the CSV sorted highest-first.
+resume:
+  min_score: 25.0       # 0-100; raise for a tighter shortlist
+  default_weight: 1.0   # weight for any skill not listed in `weights`
+  skills:
+    # Analytics / data
+    - SQL
+    - Python
+    - Excel
+    - Tableau
+    - Data Analysis
+    - Data Visualization
+    - ETL
+    # Cloud & data platforms
+    - AWS
+    - Amazon Redshift
+    - AWS EMR
+    - AWS Athena
+    - Amazon S3
+    - Azure Stack HCI
+    - Red Hat OpenStack
+    # Infrastructure & tools
+    - Kubernetes
+    - Docker
+    - Linux
+    - VMware
+    - Apache Airflow
+    - Git
+    # Business & product
+    - Requirements Gathering
+    - Customer Onboarding
+    - Feature Validation
+    - Stakeholder Management
+    - Process Improvement
+    - Root Cause Analysis
+    - Agile
+    - Scrum
+  # Technical skills weighted higher so a real tech match outranks buzzwords.
+  weights:
+    Python: 3.0
+    SQL: 3.0
+    Apache Airflow: 3.0
+    AWS: 2.5
+    ETL: 2.5
+    Kubernetes: 2.0
+    Docker: 2.0
+    Tableau: 2.0
+    Amazon Redshift: 2.0
+    AWS EMR: 2.0
+    AWS Athena: 2.0
+    Amazon S3: 2.0
+    Data Analysis: 1.5
+    Data Visualization: 1.5
+    Linux: 1.5
+    VMware: 1.5
+    Git: 1.0
+    # Business terms kept at low weight (they match loosely in many postings).
+    Requirements Gathering: 0.5
+    Customer Onboarding: 0.5
+    Feature Validation: 0.5
+    Stakeholder Management: 0.5
+    Process Improvement: 0.5
+    Root Cause Analysis: 0.5
+    Agile: 0.5
+    Scrum: 0.5
+
 storage:
   mode: "local"        # "local" | "s3"
   local_dir: "./data"
