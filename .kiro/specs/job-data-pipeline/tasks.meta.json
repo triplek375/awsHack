@@ -1,0 +1,143 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1. Project scaffolding and dependencies": [
+      {
+        "executionId": "98772807-d971-4c44-bf01-1d893ac3126d",
+        "chatSessionId": "sess_88027333-680a-43d0-bd28-3963d6da34de",
+        "timestamp": 1792183354354
+      },
+      {
+        "executionId": "98772807-d971-4c44-bf01-1d893ac3126d",
+        "chatSessionId": "sess_88027333-680a-43d0-bd28-3963d6da34de",
+        "timestamp": 1792183362091
+      }
+    ],
+    "2.1 Define `Config` dataclasses and `load_config(path)` in `config.py`.": [
+      {
+        "executionId": "98772807-d971-4c44-bf01-1d893ac3126d",
+        "chatSessionId": "sess_88027333-680a-43d0-bd28-3963d6da34de",
+        "timestamp": 1792183354671
+      }
+    ],
+    "2.2 Author `config.yaml` with search keywords/locations, source flags/endpoints,": [
+      {
+        "executionId": "98772807-d971-4c44-bf01-1d893ac3126d",
+        "chatSessionId": "sess_88027333-680a-43d0-bd28-3963d6da34de",
+        "timestamp": 1792183354872
+      }
+    ],
+    "3. Data model": [
+      {
+        "executionId": "98772807-d971-4c44-bf01-1d893ac3126d",
+        "chatSessionId": "sess_88027333-680a-43d0-bd28-3963d6da34de",
+        "timestamp": 1792183355211
+      }
+    ],
+    "4. Polite HTTP client with offline support": [
+      {
+        "executionId": "98772807-d971-4c44-bf01-1d893ac3126d",
+        "chatSessionId": "sess_88027333-680a-43d0-bd28-3963d6da34de",
+        "timestamp": 1792183355449
+      }
+    ],
+    "5. Source framework and normalization helpers": [
+      {
+        "executionId": "98772807-d971-4c44-bf01-1d893ac3126d",
+        "chatSessionId": "sess_88027333-680a-43d0-bd28-3963d6da34de",
+        "timestamp": 1792183355585
+      }
+    ],
+    "6. HiringCafe source": [
+      {
+        "executionId": "98772807-d971-4c44-bf01-1d893ac3126d",
+        "chatSessionId": "sess_88027333-680a-43d0-bd28-3963d6da34de",
+        "timestamp": 1792183355672
+      }
+    ],
+    "7.1 Implement `GreenhouseSource` (jobs + `content=true`, per-slug loop, continue on failure).": [
+      {
+        "executionId": "98772807-d971-4c44-bf01-1d893ac3126d",
+        "chatSessionId": "sess_88027333-680a-43d0-bd28-3963d6da34de",
+        "timestamp": 1792183355769
+      }
+    ],
+    "7.2 Implement `LeverSource` (`mode=json`, per-slug loop, continue on failure).": [
+      {
+        "executionId": "98772807-d971-4c44-bf01-1d893ac3126d",
+        "chatSessionId": "sess_88027333-680a-43d0-bd28-3963d6da34de",
+        "timestamp": 1792183355868
+      }
+    ],
+    "7.3 Implement `AshbySource` (job-board posting API, per-slug loop, continue on failure).": [
+      {
+        "executionId": "98772807-d971-4c44-bf01-1d893ac3126d",
+        "chatSessionId": "sess_88027333-680a-43d0-bd28-3963d6da34de",
+        "timestamp": 1792183355952
+      }
+    ],
+    "8. Deduplication": [
+      {
+        "executionId": "98772807-d971-4c44-bf01-1d893ac3126d",
+        "chatSessionId": "sess_88027333-680a-43d0-bd28-3963d6da34de",
+        "timestamp": 1792183356100
+      }
+    ],
+    "9. Local storage (JSONL + CSV)": [
+      {
+        "executionId": "98772807-d971-4c44-bf01-1d893ac3126d",
+        "chatSessionId": "sess_88027333-680a-43d0-bd28-3963d6da34de",
+        "timestamp": 1792183356201
+      }
+    ],
+    "10. Orchestrator, CLI, and logging": [
+      {
+        "executionId": "98772807-d971-4c44-bf01-1d893ac3126d",
+        "chatSessionId": "sess_88027333-680a-43d0-bd28-3963d6da34de",
+        "timestamp": 1792183356287
+      }
+    ],
+    "11. Cached sample fixtures for offline demo": [
+      {
+        "executionId": "98772807-d971-4c44-bf01-1d893ac3126d",
+        "chatSessionId": "sess_88027333-680a-43d0-bd28-3963d6da34de",
+        "timestamp": 1792183356426
+      }
+    ],
+    "12. Unit tests (normalization + dedupe)": [
+      {
+        "executionId": "98772807-d971-4c44-bf01-1d893ac3126d",
+        "chatSessionId": "sess_88027333-680a-43d0-bd28-3963d6da34de",
+        "timestamp": 1792183356549
+      }
+    ],
+    "13. README": [
+      {
+        "executionId": "98772807-d971-4c44-bf01-1d893ac3126d",
+        "chatSessionId": "sess_88027333-680a-43d0-bd28-3963d6da34de",
+        "timestamp": 1792183356636
+      }
+    ],
+    "14. S3 storage mode": [
+      {
+        "executionId": "98772807-d971-4c44-bf01-1d893ac3126d",
+        "chatSessionId": "sess_88027333-680a-43d0-bd28-3963d6da34de",
+        "timestamp": 1792183356741
+      }
+    ],
+    "15.1 Add a `lambda_handler` entrypoint that calls `run()` with S3 mode and bundle": [
+      {
+        "executionId": "98772807-d971-4c44-bf01-1d893ac3126d",
+        "chatSessionId": "sess_88027333-680a-43d0-bd28-3963d6da34de",
+        "timestamp": 1792183356819
+      }
+    ],
+    "15.2 Document/define an EventBridge schedule to invoke the Lambda on a cadence.": [
+      {
+        "executionId": "98772807-d971-4c44-bf01-1d893ac3126d",
+        "chatSessionId": "sess_88027333-680a-43d0-bd28-3963d6da34de",
+        "timestamp": 1792183356905
+      }
+    ]
+  }
+}

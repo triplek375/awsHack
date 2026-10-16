@@ -1,0 +1,7 @@
+# Core dependencies
+requests==2.32.3
+PyYAML==6.0.2
+boto3==1.35.0
+
+# Dev / test dependencies
+pytest==8.3.0
