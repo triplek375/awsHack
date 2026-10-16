@@ -11,6 +11,7 @@ from .config import Config
 from .dedupe import dedupe_on_url, filter_existing
 from .http_client import HttpClient
 from .models import JobRecord
+from .scoring import ResumeScorer, score_and_rank
 from .sources.ashby import AshbySource
 from .sources.base import Source
 from .sources.greenhouse import GreenhouseSource
@@ -26,31 +27,6 @@ class RunStats:
     fetched: int
     new: int
     skipped: int
-
-
-_ATS_SOURCES = {"greenhouse", "lever", "ashby"}
-
-
-def _filter_ats_by_keywords(
-    records: List[JobRecord], keywords: List[str]
-) -> List[JobRecord]:
-    """Keep ATS records whose title contains any keyword token.
-
-    Non-ATS records (e.g. HiringCafe) pass through unchanged. A record with no
-    title is dropped only for ATS sources, since the role cannot be confirmed.
-    """
-    if not keywords:
-        return records
-    terms = [k.lower() for k in keywords]
-    kept: List[JobRecord] = []
-    for rec in records:
-        if rec.source not in _ATS_SOURCES:
-            kept.append(rec)
-            continue
-        title = (rec.title or "").lower()
-        if any(term in title for term in terms):
-            kept.append(rec)
-    return kept
 
 
 def _build_sources(cfg: Config, http: HttpClient) -> List[Source]:
@@ -81,43 +57,55 @@ def run(cfg: Config) -> RunStats:
             all_records.append(rec)
         log.info("[%s] fetched %d records", source.name, len(all_records) - before)
 
-    # 1a. ATS boards return every posting on a company board; narrow to the
-    #     searched role(s) by matching keywords against the job title.
-    #     HiringCafe filters server-side, so its records are left untouched.
-    all_records = _filter_ats_by_keywords(all_records, cfg.search.keywords)
-
     fetched = len(all_records)
 
     # 2. Dedupe within this run.
     unique, dropped = dedupe_on_url(all_records)
 
-    # 3. Skip records already persisted in today's partition.
+    # 3. Score every job against the resume and drop those below min_score.
+    #    This replaces title keyword filtering: relevance is decided by how
+    #    well a posting's skills overlap with the resume, not its title.
+    scorer = ResumeScorer(
+        skills=cfg.resume.skills,
+        weights=cfg.resume.weights,
+        default_weight=cfg.resume.default_weight,
+    )
+    scored, below_threshold = score_and_rank(unique, scorer, cfg.resume.min_score)
+    log.info(
+        "scored %d jobs; %d matched (>= %.1f), %d dropped below threshold",
+        len(unique), len(scored), cfg.resume.min_score, below_threshold,
+    )
+
+    # 4. Skip records already persisted in today's partition.
     dt = storage.run_date()
     jsonl_path = storage.partition_path(
         cfg.storage.local_dir, cfg.storage.jsonl_prefix, dt
     )
     existing = storage.load_existing_urls(jsonl_path)
-    new_records, skipped_existing = filter_existing(unique, existing)
+    new_records, skipped_existing = filter_existing(scored, existing)
 
-    # 4. Persist: append new records to the partition JSONL.
+    # 5. Persist: append new records to the partition JSONL.
     storage.write_jsonl(new_records, jsonl_path, append=True)
 
-    # 5. CSV export reflects the full current partition (existing + new).
+    # 6. CSV export reflects the full current partition, ranked by score.
     csv_path = os.path.join(cfg.storage.local_dir, cfg.storage.csv_name)
     all_partition = _read_partition_records(jsonl_path)
-    storage.write_csv(all_partition, csv_path)
+    all_partition.sort(key=lambda r: r.match_score or 0.0, reverse=True)
+    csv_path = storage.write_csv(all_partition, csv_path)
 
-    # 6. Optional S3 upload of the partition file.
+    # 7. Optional S3 upload of the partition file.
     if cfg.storage.mode == "s3":
         storage.upload_to_s3(jsonl_path, cfg.storage, dt)
 
-    total_skipped = dropped + skipped_existing
+    total_skipped = dropped + below_threshold + skipped_existing
     stats = RunStats(
         fetched=fetched, new=len(new_records), skipped=total_skipped
     )
     log.info(
-        "run complete: fetched=%d new=%d skipped=%d (dup_in_run=%d, already_stored=%d)",
-        stats.fetched, stats.new, stats.skipped, dropped, skipped_existing,
+        "run complete: fetched=%d new=%d skipped=%d "
+        "(dup_in_run=%d, below_threshold=%d, already_stored=%d)",
+        stats.fetched, stats.new, stats.skipped,
+        dropped, below_threshold, skipped_existing,
     )
     log.info("JSONL: %s", jsonl_path)
     log.info("CSV:   %s", csv_path)
@@ -140,6 +128,9 @@ def _read_partition_records(jsonl_path: str) -> List[JobRecord]:
                 d = json.loads(line)
             except json.JSONDecodeError:
                 continue
+            matched = d.get("matched_skills")
+            if isinstance(matched, str):
+                matched = [s for s in (p.strip() for p in matched.split(",")) if s]
             records.append(
                 JobRecord(
                     url=d.get("url"),
@@ -152,6 +143,8 @@ def _read_partition_records(jsonl_path: str) -> List[JobRecord]:
                     posted_date=d.get("posted_date"),
                     salary=d.get("salary"),
                     description=d.get("description"),
+                    match_score=d.get("match_score"),
+                    matched_skills=matched,
                 )
             )
     return records

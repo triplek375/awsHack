@@ -84,11 +84,22 @@ class StorageConfig:
 
 
 @dataclass
+class ResumeConfig:
+    """Resume skill profile used to score and rank jobs."""
+
+    skills: List[str] = field(default_factory=list)
+    weights: Dict[str, float] = field(default_factory=dict)
+    default_weight: float = 1.0
+    min_score: float = 5.0  # drop jobs scoring below this (0-100)
+
+
+@dataclass
 class Config:
     search: SearchConfig
     http: HttpConfig
     sources: SourcesConfig
     storage: StorageConfig
+    resume: ResumeConfig = field(default_factory=ResumeConfig)
     offline: bool = False
 
 
@@ -191,10 +202,24 @@ def load_config(path: str) -> Config:
     if mode == "s3" and not storage.s3.bucket:
         raise ConfigError("'storage.s3.bucket' is required when storage.mode is 's3'.")
 
+    # resume (optional block; drives skill-based scoring/ranking)
+    resume_raw = raw.get("resume", {}) or {}
+    skills = list(resume_raw.get("skills", []) or [])
+    weights_raw = resume_raw.get("weights", {}) or {}
+    if not isinstance(weights_raw, dict):
+        raise ConfigError("'resume.weights' must be a mapping of skill -> number.")
+    resume = ResumeConfig(
+        skills=skills,
+        weights={str(k): float(v) for k, v in weights_raw.items()},
+        default_weight=float(resume_raw.get("default_weight", 1.0)),
+        min_score=float(resume_raw.get("min_score", 5.0)),
+    )
+
     return Config(
         search=search,
         http=http,
         sources=sources,
         storage=storage,
+        resume=resume,
         offline=bool(raw.get("offline", False)),
     )

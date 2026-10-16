@@ -58,15 +58,35 @@ def write_jsonl(records: Iterable[JobRecord], path: str, append: bool = True) ->
     return written
 
 
-def write_csv(records: List[JobRecord], path: str) -> int:
-    """Write a flat CSV of all records (overwrites). Returns row count."""
-    os.makedirs(os.path.dirname(path), exist_ok=True)
+def _write_csv_to(path: str, records: List[JobRecord]) -> None:
     with open(path, "w", encoding="utf-8", newline="") as fh:
         writer = csv.DictWriter(fh, fieldnames=SCHEMA_FIELDS)
         writer.writeheader()
         for rec in records:
             writer.writerow(rec.to_dict())
-    return len(records)
+
+
+def write_csv(records: List[JobRecord], path: str) -> str:
+    """Write a flat CSV of all records (overwrites). Returns the path written.
+
+    If the target file is locked (e.g. open in Excel on Windows), fall back to a
+    timestamped filename so the run still succeeds and no data is lost.
+    """
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    try:
+        _write_csv_to(path, records)
+        return path
+    except PermissionError:
+        import time
+
+        root, ext = os.path.splitext(path)
+        fallback = f"{root}_{time.strftime('%Y%m%d_%H%M%S')}{ext}"
+        log.warning(
+            "CSV '%s' is locked (open in another app?); writing to '%s' instead",
+            path, fallback,
+        )
+        _write_csv_to(fallback, records)
+        return fallback
 
 
 def upload_to_s3(local_path: str, cfg: StorageConfig, dt: str) -> None:
