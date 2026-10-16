@@ -1,0 +1,52 @@
+{
+  "results": [
+    {
+      "apply_url": "https://example-co.com/careers/data-engineer-123",
+      "job_information": {
+        "title": "Data Engineer",
+        "company_name": "Example Co",
+        "description": "<p>Build and maintain <b>data pipelines</b> on AWS.</p><ul><li>Python</li><li>SQL</li></ul>"
+      },
+      "v5_processed_job_data": {
+        "job_title": "Data Engineer",
+        "company_name": "Example Co",
+        "workplace_type": "Remote",
+        "formatted_workplace_location": "Remote - US",
+        "estimated_publish_date": "2026-10-10T00:00:00Z",
+        "yearly_min_compensation": 120000,
+        "yearly_max_compensation": 160000,
+        "compensation_currency": "USD"
+      }
+    },
+    {
+      "apply_url": "https://acme.io/jobs/cloud-engineer-456",
+      "job_information": {
+        "title": "Cloud Engineer",
+        "company_name": "Acme Cloud",
+        "description": "<p>Manage Kubernetes clusters in Texas data centers.</p>"
+      },
+      "v5_processed_job_data": {
+        "job_title": "Cloud Engineer",
+        "company_name": "Acme Cloud",
+        "workplace_type": "Onsite",
+        "formatted_workplace_location": "Austin, TX",
+        "estimated_publish_date": "2026-10-12T00:00:00Z"
+      }
+    },
+    {
+      "apply_url": "https://example-co.com/careers/data-engineer-123",
+      "job_information": {
+        "title": "Data Engineer (duplicate posting)",
+        "company_name": "Example Co",
+        "description": "<p>Duplicate of the first posting, same apply URL.</p>"
+      },
+      "v5_processed_job_data": {
+        "job_title": "Data Engineer",
+        "company_name": "Example Co",
+        "workplace_type": "Remote",
+        "formatted_workplace_location": "Remote - US",
+        "estimated_publish_date": "2026-10-10T00:00:00Z"
+      }
+    }
+  ]
+}

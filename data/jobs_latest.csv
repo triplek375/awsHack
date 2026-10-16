@@ -1,0 +1,3 @@
+url,title,company,location,remote,posted_date,salary,description,source,fetched_at
+https://example-co.com/careers/data-engineer-123,Data Engineer,Example Co,Remote - US,True,2026-10-10T00:00:00+00:00,USD 120000-160000,Build and maintain data pipelines on AWS. Python SQL,hiring_cafe,2026-10-16T20:51:41.257342+00:00
+https://acme.io/jobs/cloud-engineer-456,Cloud Engineer,Acme Cloud,"Austin, TX",False,2026-10-12T00:00:00+00:00,,Manage Kubernetes clusters in Texas data centers.,hiring_cafe,2026-10-16T20:51:41.257342+00:00

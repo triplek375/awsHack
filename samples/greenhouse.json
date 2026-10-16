@@ -1,0 +1,18 @@
+{
+  "jobs": [
+    {
+      "absolute_url": "https://boards.greenhouse.io/examplecorp/jobs/7000001",
+      "title": "Senior Data Engineer",
+      "updated_at": "2026-10-09T15:04:05-04:00",
+      "location": { "name": "Remote - United States" },
+      "content": "&lt;p&gt;Own the data platform. Spark, Airflow, AWS.&lt;/p&gt;"
+    },
+    {
+      "absolute_url": "https://boards.greenhouse.io/examplecorp/jobs/7000002",
+      "title": "Platform Engineer",
+      "updated_at": "2026-10-11T09:00:00-04:00",
+      "location": { "name": "Houston, TX" },
+      "content": "&lt;p&gt;Terraform and Kubernetes on GCP.&lt;/p&gt;"
+    }
+  ]
+}

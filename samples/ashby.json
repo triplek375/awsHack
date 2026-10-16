@@ -1,0 +1,21 @@
+{
+  "jobs": [
+    {
+      "jobUrl": "https://jobs.ashbyhq.com/exampleashby/0001",
+      "title": "Data Engineer",
+      "location": "Remote (US)",
+      "isRemote": true,
+      "publishedAt": "2026-10-08T12:00:00Z",
+      "descriptionHtml": "<p>Build the data warehouse. BigQuery, Python.</p>",
+      "compensation": { "compensationTierSummary": "USD 130K - 170K" }
+    },
+    {
+      "jobUrl": "https://jobs.ashbyhq.com/exampleashby/0002",
+      "title": "Cloud Infrastructure Engineer",
+      "location": "San Antonio, TX",
+      "isRemote": false,
+      "publishedAt": "2026-10-13T08:30:00Z",
+      "descriptionHtml": "<p>Own cloud infra. AWS, Terraform.</p>"
+    }
+  ]
+}

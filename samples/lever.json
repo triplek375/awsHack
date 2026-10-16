@@ -1,0 +1,24 @@
+[
+  {
+    "hostedUrl": "https://jobs.lever.co/examplelever/abc-123",
+    "text": "Data Engineer",
+    "categories": {
+      "location": "Remote",
+      "commitment": "Full-time",
+      "workplaceType": "remote"
+    },
+    "createdAt": 1760054400000,
+    "descriptionPlain": "Design ELT pipelines. Python, dbt, Snowflake."
+  },
+  {
+    "hostedUrl": "https://jobs.lever.co/examplelever/def-456",
+    "text": "Site Reliability Engineer",
+    "categories": {
+      "location": "Dallas, TX",
+      "commitment": "Full-time",
+      "workplaceType": "onsite"
+    },
+    "createdAt": 1760140800000,
+    "description": "<p>Keep production healthy. Go, Prometheus, AWS.</p>"
+  }
+]

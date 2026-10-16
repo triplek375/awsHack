@@ -1,0 +1,68 @@
+# Job data collection pipeline configuration.
+# Everything tunable lives here; no values are hardcoded in source.
+
+search:
+  keywords:          # each keyword runs as its own HiringCafe search
+    - data engineer
+    - cloud engineer
+  locations:         # free-text locations sent in the HiringCafe searchState
+    - Texas
+    - remote US
+  date_fetched_past_n_days: 61
+  max_pages_per_run: 10
+
+http:
+  user_agent: "job-data-pipeline/1.0 (+contact@example.com)"
+  delay_seconds: 1.5          # polite delay between requests
+  timeout_seconds: 30
+  retry:
+    max_attempts: 5
+    backoff_base_seconds: 1.0  # exponential backoff: base * 2**attempt
+    retry_on_status: [429, 500, 502, 503, 504]
+
+sources:
+  hiring_cafe:
+    enabled: true
+    search_url: "https://hiring.cafe/api/search-jobs"
+    count_url: "https://hiring.cafe/api/search-jobs/get-total-count"
+    page_size: 100
+    # Default searchState filters. Query / locations / date window are injected
+    # per-run from the `search` section above; these are the remaining filters.
+    search_state_defaults:
+      workplaceTypes: ["Remote", "Hybrid", "Onsite"]
+      defaultToUserLocation: false
+      commitmentTypes:
+        ["Full Time", "Part Time", "Contract", "Internship", "Temporary"]
+      seniorityLevel:
+        ["No Prior Experience Required", "Entry Level", "Mid Level", "Senior Level"]
+      roleTypes: ["Individual Contributor", "People Manager"]
+      sortBy: "default"
+      companyPublicOrPrivate: "all"
+      isNonProfit: "all"
+
+  # Optional ATS sources. Disabled by default; add company slugs to enable.
+  greenhouse:
+    enabled: false
+    url_template: "https://boards-api.greenhouse.io/v1/boards/{company}/jobs?content=true"
+    companies: []     # e.g. ["stripe", "airbnb"]
+
+  lever:
+    enabled: false
+    url_template: "https://api.lever.co/v0/postings/{company}?mode=json"
+    companies: []     # e.g. ["netflix", "plaid"]
+
+  ashby:
+    enabled: false
+    url_template: "https://api.ashbyhq.com/posting-api/job-board/{company}"
+    companies: []     # e.g. ["ramp", "linear"]
+
+storage:
+  mode: "local"        # "local" | "s3"
+  local_dir: "./data"
+  jsonl_prefix: "jobs" # -> jobs/dt=YYYY-MM-DD/run.jsonl
+  csv_name: "jobs_latest.csv"
+  s3:
+    bucket: ""
+    prefix: ""
+
+offline: false         # true => read from samples/ instead of the network
