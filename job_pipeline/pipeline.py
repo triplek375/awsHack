@@ -28,6 +28,31 @@ class RunStats:
     skipped: int
 
 
+_ATS_SOURCES = {"greenhouse", "lever", "ashby"}
+
+
+def _filter_ats_by_keywords(
+    records: List[JobRecord], keywords: List[str]
+) -> List[JobRecord]:
+    """Keep ATS records whose title contains any keyword token.
+
+    Non-ATS records (e.g. HiringCafe) pass through unchanged. A record with no
+    title is dropped only for ATS sources, since the role cannot be confirmed.
+    """
+    if not keywords:
+        return records
+    terms = [k.lower() for k in keywords]
+    kept: List[JobRecord] = []
+    for rec in records:
+        if rec.source not in _ATS_SOURCES:
+            kept.append(rec)
+            continue
+        title = (rec.title or "").lower()
+        if any(term in title for term in terms):
+            kept.append(rec)
+    return kept
+
+
 def _build_sources(cfg: Config, http: HttpClient) -> List[Source]:
     sources: List[Source] = []
     if cfg.sources.hiring_cafe.enabled:
@@ -55,6 +80,11 @@ def run(cfg: Config) -> RunStats:
         for rec in source.fetch():
             all_records.append(rec)
         log.info("[%s] fetched %d records", source.name, len(all_records) - before)
+
+    # 1a. ATS boards return every posting on a company board; narrow to the
+    #     searched role(s) by matching keywords against the job title.
+    #     HiringCafe filters server-side, so its records are left untouched.
+    all_records = _filter_ats_by_keywords(all_records, cfg.search.keywords)
 
     fetched = len(all_records)
 

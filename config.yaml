@@ -42,9 +42,9 @@ sources:
 
   # Optional ATS sources. Disabled by default; add company slugs to enable.
   greenhouse:
-    enabled: false
+    enabled: true
     url_template: "https://boards-api.greenhouse.io/v1/boards/{company}/jobs?content=true"
-    companies: []     # e.g. ["stripe", "airbnb"]
+    companies: ["stripe", "databricks", "airbnb"]   # real public Greenhouse boards
 
   lever:
     enabled: false

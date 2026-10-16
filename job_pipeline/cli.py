@@ -23,6 +23,19 @@ def _parse_args(argv=None) -> argparse.Namespace:
         action="store_true",
         help="Read cached fixtures from samples/ instead of the network.",
     )
+    parser.add_argument(
+        "--keywords",
+        nargs="+",
+        metavar="ROLE",
+        help="Job role(s) to search, overriding search.keywords in config. "
+        'Example: --keywords "data engineer" "cloud engineer"',
+    )
+    parser.add_argument(
+        "--locations",
+        nargs="+",
+        metavar="LOC",
+        help="Location(s) to search, overriding search.locations in config.",
+    )
     storage = parser.add_mutually_exclusive_group()
     storage.add_argument(
         "--local", action="store_true", help="Force local storage mode."
@@ -56,6 +69,10 @@ def main(argv=None) -> int:
         cfg.storage.mode = "local"
     if args.s3:
         cfg.storage.mode = "s3"
+    if args.keywords:
+        cfg.search.keywords = args.keywords
+    if args.locations:
+        cfg.search.locations = args.locations
 
     stats = run(cfg)
     print(
