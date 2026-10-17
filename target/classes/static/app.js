@@ -16,6 +16,16 @@ let currentPage = 0;
 let totalPages = 0;
 let requestNumber = 0;
 
+// Columns to show, in display order. Each maps a CSV header name to a
+// friendlier label. Any other columns in the CSV are hidden.
+const DISPLAY_COLUMNS = [
+    { key: "match_score", label: "Match Score" },
+    { key: "company", label: "Company" },
+    { key: "title", label: "Title" },
+    { key: "location", label: "Location" },
+    { key: "posted_date", label: "Posted Date" }
+];
+
 async function loadFiles() {
     try {
         const response = await fetch("/api/csv");
@@ -29,7 +39,7 @@ async function loadFiles() {
 
         if (files.length === 0) {
             fileSelect.add(new Option("No CSV files found", ""));
-            status.textContent = "Add CSV files to the csvFiles folder.";
+            status.textContent = "Add CSV files to the data folder.";
             return;
         }
 
@@ -72,9 +82,13 @@ async function loadPage() {
         if (requestId !== requestNumber) return;
 
         renderTable(data);
+
+        const searching = searchInput.value.trim().length > 0;
         status.textContent = data.totalRows === 0
             ? "No matching rows."
-            : `Showing ${data.rows.length} rows on this page.`;
+            : searching
+                ? `Showing ${data.rows.length} of ${data.totalRows.toLocaleString()} matches, ranked by relevance.`
+                : `Showing ${data.rows.length} rows on this page.`;
     } catch (error) {
         if (requestId !== requestNumber) return;
         status.textContent = error.message;
@@ -86,14 +100,26 @@ async function loadPage() {
 function renderTable(data) {
     filenameLabel.textContent = data.filename;
     rowCount.textContent = data.totalRows.toLocaleString();
-    columnCount.textContent = data.headers.length;
     totalPages = data.totalPages;
+
+    // Map each CSV header name to its column index so we can pick out the
+    // columns we want to display regardless of their order in the file.
+    const indexByHeader = new Map(
+        data.headers.map((header, index) => [header, index])
+    );
+
+    // Keep only the display columns that actually exist in this file.
+    const columns = DISPLAY_COLUMNS.filter(
+        (column) => indexByHeader.has(column.key)
+    );
+
+    columnCount.textContent = columns.length;
 
     const headerRow = document.createElement("tr");
 
-    for (const header of data.headers) {
+    for (const column of columns) {
         const th = document.createElement("th");
-        th.textContent = header;
+        th.textContent = column.label;
         headerRow.appendChild(th);
     }
 
@@ -104,9 +130,10 @@ function renderTable(data) {
     for (const row of data.rows) {
         const tr = document.createElement("tr");
 
-        for (let i = 0; i < data.headers.length; i++) {
+        for (const column of columns) {
             const td = document.createElement("td");
-            td.textContent = row[i] ?? "";
+            const value = row[indexByHeader.get(column.key)] ?? "";
+            td.textContent = value;
             tr.appendChild(td);
         }
 

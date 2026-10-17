@@ -185,13 +185,27 @@ public class CsvService {
         String query = search == null
                 ? "" : search.toLowerCase(Locale.ROOT).trim();
 
-        List<List<String>> matching = query.isEmpty()
-                ? csv.rows()
-                : csv.rows().stream()
-                    .filter(row -> row.stream().anyMatch(value ->
-                            value.toLowerCase(Locale.ROOT)
-                                    .contains(query)))
+        List<List<String>> matching;
+
+        if (query.isEmpty()) {
+            matching = csv.rows();
+        } else {
+            // Split the query into terms so a multi-word search ranks
+            // rows that match more terms (and match them more often) higher.
+            String[] terms = query.split("\\s+");
+
+            matching = csv.rows().stream()
+                    .map(row -> Map.entry(
+                            row, relevanceScore(row, csv.headers(), terms)))
+                    .filter(entry -> entry.getValue() > 0)
+                    // Highest relevance first; stable sort preserves the
+                    // original file order for rows with equal scores.
+                    .sorted(Comparator.comparingDouble(
+                            (Map.Entry<List<String>, Double> e) ->
+                                    e.getValue()).reversed())
+                    .map(Map.Entry::getKey)
                     .toList();
+        }
 
         long total = matching.size();
         int totalPages = (int) ((total + size - 1) / size);
@@ -208,5 +222,78 @@ public class CsvService {
                 filename, csv.headers(), rows,
                 total, page, size, totalPages
         );
+    }
+
+    /**
+     * Scores how relevant a row is to the search terms. A row scores points
+     * for each term it contains, weighted so that matches in the more
+     * meaningful columns (title, company, matched_skills, location) count
+     * more than matches buried in the description. A row that matches more
+     * of the terms also scores higher. Returns 0 when no term matches.
+     */
+    private double relevanceScore(
+            List<String> row, List<String> headers, String[] terms) {
+
+        double score = 0;
+
+        for (String term : terms) {
+            if (term.isEmpty()) {
+                continue;
+            }
+
+            boolean termMatched = false;
+
+            for (int i = 0; i < row.size(); i++) {
+                String value = row.get(i).toLowerCase(Locale.ROOT);
+
+                if (!value.contains(term)) {
+                    continue;
+                }
+
+                termMatched = true;
+
+                String column = i < headers.size()
+                        ? headers.get(i).toLowerCase(Locale.ROOT)
+                        : "";
+
+                double weight = columnWeight(column);
+
+                // Count every occurrence of the term in this cell so a cell
+                // mentioning the term repeatedly ranks above one that mentions
+                // it once.
+                int occurrences = 0;
+                int from = 0;
+                while ((from = value.indexOf(term, from)) != -1) {
+                    occurrences++;
+                    from += term.length();
+                }
+
+                score += weight * occurrences;
+
+                // Bonus when the cell equals the term exactly (e.g. an exact
+                // company or location match).
+                if (value.equals(term)) {
+                    score += weight * 5;
+                }
+            }
+
+            // Reward rows that match more of the distinct search terms.
+            if (termMatched) {
+                score += 10;
+            }
+        }
+
+        return score;
+    }
+
+    private double columnWeight(String column) {
+        return switch (column) {
+            case "title" -> 8;
+            case "company" -> 6;
+            case "matched_skills" -> 5;
+            case "location" -> 4;
+            case "description" -> 1;
+            default -> 2;
+        };
     }
 }
